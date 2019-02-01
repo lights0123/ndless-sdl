@@ -1,0 +1,24 @@
+[package]
+name = "ndless-sdl"
+version = "0.1.0"
+authors = [
+	"Brian Anderson <banderson@mozilla.com>",
+	"Kang Seonghoon <public+rust@mearie.org>",
+	"Ben Schattinger <developer@lights0123.com>",
+]
+
+description = "SDL bindings for Nspire & Ndless"
+repository = "https://github.com/lights0123/ndless-sdl"
+license = "MIT"
+
+edition = "2018"
+
+[lib]
+path = "src/sdl/lib.rs"
+
+[dependencies]
+num = { version = "0.2.0", default-features = false }
+rand = { version = "0.6.5", default-features = false }
+cty = "0.1.5"
+cstr_core = { version = "0.1.2", features = ["alloc"] }
+nspire =  "0.3.1"

@@ -1,0 +1,17 @@
+*~
+*#
+*.o
+*.a
+*.so
+*.rlib
+*.dylib
+*.dSYM
+*.dll
+*.dummy
+*.exe
+build
+bin
+lib
+.rust
+target
+Cargo.lock

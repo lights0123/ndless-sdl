@@ -1,0 +1,17 @@
+[package]
+name = "sdl-demo"
+version = "0.3.5"
+authors = [
+	"Brian Anderson <banderson@mozilla.com>",
+	"Kang Seonghoon <public+rust@mearie.org>"
+]
+
+[[bin]]
+name = "sdl-demo"
+path = "main.rs"
+
+[dependencies.sdl]
+path = "../.."
+
+[dependencies]
+rand = "0.3"
