@@ -18,9 +18,9 @@ pub mod ll {
 	#![allow(non_camel_case_types)]
 
 	use cty::{
+		c_char as c_schar,
 		c_int,
 		c_uchar,
-		c_char as c_schar,
 		c_uint,
 		c_void,
 		int32_t,
@@ -719,6 +719,11 @@ impl Surface {
 
 	pub fn clear(&self) -> bool {
 		self.fill(RGB(0, 0, 0))
+	}
+
+	pub fn draw_str(&self, font: &crate::nsdl::Font, msg: impl Into<String>, x: i32, y: i32) {
+		let msg = nspire::cstr!(msg.into());
+		unsafe { crate::nsdl::ll::nSDL_DrawString(self.raw, font.font, x, y, msg.as_ptr()) }
 	}
 }
 
