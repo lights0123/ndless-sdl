@@ -1,4 +1,6 @@
 #![no_std]
+#![allow(clippy::not_unsafe_ptr_arg_deref)]
+#![allow(clippy::enum_clike_unportable_variant)]
 //! # SDL bindings for Ndless
 //! Get started with:
 //! ```
@@ -21,18 +23,21 @@
 //! ```
 //!
 //! It is not recommended to use the input methods from this crate. Rather, use the ones built
-//! into the nspire crate.
+//! into the ndless crate.
 extern crate num;
-extern crate rand;
 
 pub use sdl::*;
 
 pub mod event;
+pub mod gl;
 pub mod keysym;
 pub mod mouse;
-pub mod video;
-pub mod gl;
-pub mod wm;
 pub mod nsdl;
+pub mod video;
+pub mod wm;
 
+pub mod image;
 pub mod sdl;
+pub mod text;
+
+pub mod gfx;

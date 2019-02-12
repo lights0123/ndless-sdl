@@ -4,7 +4,7 @@ use core::str;
 
 use cstr_core::CStr;
 use cty::*;
-use nspire::prelude::*;
+use ndless::prelude::*;
 use num::FromPrimitive;
 
 pub mod ll {
@@ -12,16 +12,7 @@ pub mod ll {
 
 	use core::mem;
 
-	use cty::{
-		c_int,
-		c_uchar,
-		c_char as c_schar,
-		c_uint,
-		c_void,
-		int16_t,
-		uint16_t,
-		uint8_t
-	};
+	use cty::{c_char as c_schar, c_int, c_uchar, c_uint, c_void, int16_t, uint16_t, uint8_t};
 
 	pub use crate::keysym::*;
 
@@ -207,29 +198,34 @@ pub mod ll {
 pub enum AppState {
 	MouseFocus = ll::SDL_APPMOUSEFOCUS as isize,
 	InputFocus = ll::SDL_APPINPUTFOCUS as isize,
-	Active = ll::SDL_APPACTIVE as isize
+	Active = ll::SDL_APPACTIVE as isize,
 }
 
 fn wrap_app_state(bitflags: u8) -> Vec<AppState> {
-	let flags = [AppState::MouseFocus,
-		AppState::InputFocus,
-		AppState::Active];
+	let flags = [AppState::MouseFocus, AppState::InputFocus, AppState::Active];
 
-	flags.iter().filter_map(|&flag| {
-		if bitflags & (flag as u8) != 0 { Some(flag) } else { None }
-	}).collect()
+	flags
+		.iter()
+		.filter_map(|&flag| {
+			if bitflags & (flag as u8) != 0 {
+				Some(flag)
+			} else {
+				None
+			}
+		})
+		.collect()
 }
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum RepeatDelay {
 	Default,
-	Custom(isize)
+	Custom(isize),
 }
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum RepeatInterval {
 	Default,
-	Custom(isize)
+	Custom(isize),
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
@@ -710,7 +706,9 @@ impl FromPrimitive for Key {
 		})
 	}
 
-	fn from_u64(n: u64) -> Option<Key> { FromPrimitive::from_i64(n as i64) }
+	fn from_u64(n: u64) -> Option<Key> {
+		FromPrimitive::from_i64(n as i64)
+	}
 }
 
 fn wrap_key(i: ll::SDLKey) -> Option<Key> {
@@ -731,11 +729,12 @@ pub enum Mod {
 	Num = 0x1000,
 	Caps = 0x2000,
 	Mode = 0x4000,
-	Reserved = 0x8000
+	Reserved = 0x8000,
 }
 
 fn wrap_mod_state(bitflags: ll::SDLMod) -> Vec<Mod> {
-	let flags = [Mod::None,
+	let flags = [
+		Mod::None,
 		Mod::LShift,
 		Mod::RShift,
 		Mod::LCtrl,
@@ -747,11 +746,19 @@ fn wrap_mod_state(bitflags: ll::SDLMod) -> Vec<Mod> {
 		Mod::Num,
 		Mod::Caps,
 		Mod::Mode,
-		Mod::Reserved];
+		Mod::Reserved,
+	];
 
-	flags.iter().filter_map(|&flag| {
-		if bitflags & (flag as ll::SDLMod) != 0 { Some(flag) } else { None }
-	}).collect()
+	flags
+		.iter()
+		.filter_map(|&flag| {
+			if bitflags & (flag as ll::SDLMod) != 0 {
+				Some(flag)
+			} else {
+				None
+			}
+		})
+		.collect()
 }
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
@@ -760,7 +767,7 @@ pub enum HatState {
 	Up,
 	Right,
 	Down,
-	Left
+	Left,
 }
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
@@ -769,7 +776,7 @@ pub enum Mouse {
 	Middle,
 	Right,
 	WheelUp,
-	WheelDown
+	WheelDown,
 }
 
 impl FromPrimitive for Mouse {
@@ -784,7 +791,9 @@ impl FromPrimitive for Mouse {
 		})
 	}
 
-	fn from_u64(n: u64) -> Option<Mouse> { FromPrimitive::from_i64(n as i64) }
+	fn from_u64(n: u64) -> Option<Mouse> {
+		FromPrimitive::from_i64(n as i64)
+	}
 }
 
 fn wrap_mouse(bitflags: u8) -> Option<Mouse> {
@@ -799,21 +808,30 @@ pub enum MouseState {
 	WheelUp,
 	WheelDown,
 	X1,
-	X2
+	X2,
 }
 
 fn wrap_mouse_state(bitflags: u8) -> Vec<MouseState> {
-	let flags = [MouseState::Left,
+	let flags = [
+		MouseState::Left,
 		MouseState::Middle,
 		MouseState::Right,
 		MouseState::WheelUp,
 		MouseState::WheelDown,
 		MouseState::X1,
-		MouseState::X2];
+		MouseState::X2,
+	];
 
-	flags.iter().filter_map(|&flag| {
-		if bitflags & (flag as u8) != 0 { Some(flag) } else { None }
-	}).collect()
+	flags
+		.iter()
+		.filter_map(|&flag| {
+			if bitflags & (flag as u8) != 0 {
+				Some(flag)
+			} else {
+				None
+			}
+		})
+		.collect()
 }
 
 #[derive(Debug, PartialEq)]
@@ -843,61 +861,88 @@ fn null_event() -> ll::SDL_Event {
 fn wrap_event(raw: ll::SDL_Event) -> Event {
 	unsafe {
 		let ty = raw._type();
-		let ty = if ty.is_null() { return Event::None; } else { *ty };
+		let ty = if ty.is_null() {
+			return Event::None;
+		} else {
+			*ty
+		};
 
 		let ty: EventType = match FromPrimitive::from_usize(ty as usize) {
 			Some(ty) => ty,
-			None => return Event::None
+			None => return Event::None,
 		};
 
 		match ty {
 			EventType::None => Event::None,
 			EventType::Active => {
 				let active = raw.active();
-				let active = if active.is_null() { return Event::None; } else { *active };
+				let active = if active.is_null() {
+					return Event::None;
+				} else {
+					*active
+				};
 
 				Event::Active(active.gain == 1, wrap_app_state(active.state))
 			}
 			EventType::KeyDown | EventType::KeyUp => {
 				let key = raw.key();
-				let (key, okey) = if key.is_null() { return Event::None; } else { ((*key).keysym, *key) };
+				let (key, okey) = if key.is_null() {
+					return Event::None;
+				} else {
+					((*key).keysym, *key)
+				};
 
 				match wrap_key(key.sym) {
 					Some(sym) => {
-						Event::Key(sym, okey.state == 1, wrap_mod_state(key._mod),
-						           key.unicode)
+						Event::Key(sym, okey.state == 1, wrap_mod_state(key._mod), key.unicode)
 					}
-					None => Event::None
+					None => Event::None,
 				}
 			}
 			EventType::MouseMotion => {
 				let motion = raw.motion();
-				let motion = if motion.is_null() { return Event::None; } else { *motion };
+				let motion = if motion.is_null() {
+					return Event::None;
+				} else {
+					*motion
+				};
 
-				Event::MouseMotion(wrap_mouse_state(motion.state), motion.x,
-				                   motion.y, motion.xrel, motion.yrel)
+				Event::MouseMotion(
+					wrap_mouse_state(motion.state),
+					motion.x,
+					motion.y,
+					motion.xrel,
+					motion.yrel,
+				)
 			}
 			EventType::MouseButtonDown | EventType::MouseButtonUp => {
 				let obutton = raw.button();
-				let obutton = if obutton.is_null() { return Event::None; } else { *obutton };
+				let obutton = if obutton.is_null() {
+					return Event::None;
+				} else {
+					*obutton
+				};
 
 				match wrap_mouse(obutton.button) {
 					Some(button) => {
-						Event::MouseButton(button, obutton.state == 1,
-						                   obutton.x, obutton.y)
+						Event::MouseButton(button, obutton.state == 1, obutton.x, obutton.y)
 					}
-					None => Event::None
+					None => Event::None,
 				}
 			}
 			EventType::Quit => Event::Quit,
 			EventType::Resize => {
 				let resize = raw.resize();
-				let resize = if resize.is_null() { return Event::None; } else { *resize };
+				let resize = if resize.is_null() {
+					return Event::None;
+				} else {
+					*resize
+				};
 
 				Event::Resize(resize.w as isize, resize.h as isize)
 			}
 			EventType::Expose => Event::Expose,
-			_ => Event::None
+			_ => Event::None,
 		}
 	}
 }
@@ -925,8 +970,12 @@ pub enum EventType {
 }
 
 impl EventType {
-	pub fn get_state(&self) -> bool { get_event_state(*self) }
-	pub fn set_state(&self, state: bool) { set_event_state(*self, state) }
+	pub fn get_state(self) -> bool {
+		get_event_state(self)
+	}
+	pub fn set_state(self, state: bool) {
+		set_event_state(self, state)
+	}
 }
 
 impl FromPrimitive for EventType {
@@ -953,23 +1002,28 @@ impl FromPrimitive for EventType {
 		})
 	}
 
-	fn from_u64(n: u64) -> Option<EventType> { FromPrimitive::from_i64(n as i64) }
+	fn from_u64(n: u64) -> Option<EventType> {
+		FromPrimitive::from_i64(n as i64)
+	}
 }
 
 pub fn pump_events() {
-	unsafe { ll::SDL_PumpEvents(); }
+	unsafe {
+		ll::SDL_PumpEvents();
+	}
 }
 
 // TODO: peep_events (a tricky one but doable)
 
 pub fn wait_event() -> Event {
 	let mut raw = null_event();
-	let success = unsafe {
-		ll::SDL_WaitEvent(&mut raw)
-			== 1 as c_int
-	};
+	let success = unsafe { ll::SDL_WaitEvent(&mut raw) == 1 as c_int };
 
-	if success { wrap_event(raw) } else { Event::None }
+	if success {
+		wrap_event(raw)
+	} else {
+		Event::None
+	}
 }
 
 pub fn poll_event() -> Event {
@@ -988,14 +1042,13 @@ pub fn poll_event() -> Event {
 // TODO: set_event_filter, get_event_filter
 
 pub fn set_event_state(ty: EventType, state: bool) {
-	unsafe { ll::SDL_EventState(ty as u8, state as c_int); }
+	unsafe {
+		ll::SDL_EventState(ty as u8, state as c_int);
+	}
 }
 
 pub fn get_event_state(ty: EventType) -> bool {
-	unsafe {
-		ll::SDL_EventState(ty as u8, ll::SDL_QUERY as c_int)
-			== ll::SDL_ENABLE as u8
-	}
+	unsafe { ll::SDL_EventState(ty as u8, ll::SDL_QUERY as c_int) == ll::SDL_ENABLE as u8 }
 }
 
 pub fn get_key_state() -> Vec<(Key, bool)> {
@@ -1005,14 +1058,16 @@ pub fn get_key_state() -> Vec<(Key, bool)> {
 
 	let buf = data as *const u8;
 	let buf = unsafe { slice::from_raw_parts(buf, num as usize) };
-	buf.iter().filter_map(|&state| {
-		i += 1;
+	buf.iter()
+		.filter_map(|&state| {
+			i += 1;
 
-		match wrap_key(i as ll::SDLKey) {
-			Some(key) => Some((key, state == 1)),
-			None => None
-		}
-	}).collect()
+			match wrap_key(i as ll::SDLKey) {
+				Some(key) => Some((key, state == 1)),
+				None => None,
+			}
+		})
+		.collect()
 }
 
 pub fn get_mod_state() -> Vec<Mod> {
@@ -1021,9 +1076,11 @@ pub fn get_mod_state() -> Vec<Mod> {
 
 pub fn set_mod_state(states: &[Mod]) {
 	unsafe {
-		ll::SDL_SetModState(states.iter().fold(0u32, |states, &state| {
-			states | state as ll::SDLMod
-		}));
+		ll::SDL_SetModState(
+			states
+				.iter()
+				.fold(0u32, |states, &state| states | state as ll::SDLMod),
+		);
 	}
 }
 
@@ -1031,7 +1088,9 @@ pub fn get_key_name(key: Key) -> String {
 	unsafe {
 		let cstr = ll::SDL_GetKeyName(key as ll::SDLKey);
 
-		str::from_utf8(CStr::from_ptr(mem::transmute_copy(&cstr)).to_bytes()).unwrap().to_string()
+		str::from_utf8(CStr::from_ptr(mem::transmute_copy(&cstr)).to_bytes())
+			.unwrap()
+			.to_string()
 	}
 }
 
@@ -1042,7 +1101,9 @@ pub fn get_app_state() -> Vec<AppState> {
 }
 
 pub fn enable_unicode(enable: bool) {
-	unsafe { ll::SDL_EnableUNICODE(enable as c_int); }
+	unsafe {
+		ll::SDL_EnableUNICODE(enable as c_int);
+	}
 }
 
 pub fn is_unicode_enabled() -> bool {
@@ -1052,16 +1113,14 @@ pub fn is_unicode_enabled() -> bool {
 pub fn enable_key_repeat(delay: RepeatDelay, interval: RepeatInterval) -> bool {
 	let delay = match delay {
 		RepeatDelay::Default => 500,
-		RepeatDelay::Custom(delay) => delay
+		RepeatDelay::Custom(delay) => delay,
 	};
 	let interval = match interval {
 		RepeatInterval::Default => 30,
-		RepeatInterval::Custom(interval) => interval
+		RepeatInterval::Custom(interval) => interval,
 	};
 
-	unsafe {
-		ll::SDL_EnableKeyRepeat(delay as c_int, interval as c_int) == 0 as c_int
-	}
+	unsafe { ll::SDL_EnableKeyRepeat(delay as c_int, interval as c_int) == 0 as c_int }
 }
 
 // get_mouse_state, get_relative_mouse_state, start_text_input, stop_text_input, set_text_input_rect

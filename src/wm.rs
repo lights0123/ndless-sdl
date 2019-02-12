@@ -1,13 +1,13 @@
-use cstr_core::{CStr, CString};
 use core::mem;
 use core::ptr;
 use core::str;
-use nspire::prelude::*;
+use cstr_core::{CStr, CString};
+use ndless::prelude::*;
 
 pub mod ll {
 	#![allow(non_camel_case_types)]
 
-	use cty::{c_int, uint8_t,c_char as c_schar};
+	use cty::{c_char as c_schar, c_int, uint8_t};
 
 	use crate::video::ll::SDL_Surface;
 
@@ -32,13 +32,15 @@ pub mod ll {
 pub enum GrabMode {
 	Query = ll::SDL_GRAB_QUERY as isize,
 	Off = ll::SDL_GRAB_OFF as isize,
-	On = ll::SDL_GRAB_ON as isize
+	On = ll::SDL_GRAB_ON as isize,
 }
 
 pub fn set_caption(title: &str, icon: &str) {
 	unsafe {
-		ll::SDL_WM_SetCaption(CString::new(title.as_bytes()).unwrap().as_ptr(),
-		                      CString::new(icon.as_bytes()).unwrap().as_ptr());
+		ll::SDL_WM_SetCaption(
+			CString::new(title.as_bytes()).unwrap().as_ptr(),
+			CString::new(icon.as_bytes()).unwrap().as_ptr(),
+		);
 	}
 }
 
@@ -52,12 +54,12 @@ pub fn get_caption() -> (String, String) {
 		ll::SDL_WM_GetCaption(&mut title_buf, &mut icon_buf);
 
 		if !title_buf.is_null() {
-			let slice = CStr::from_ptr(mem::transmute_copy(&mut &title_buf)).to_bytes();
+			let slice = CStr::from_ptr(mem::transmute_copy(&title_buf)).to_bytes();
 			title = str::from_utf8(slice).unwrap().to_string();
 		}
 
 		if !icon_buf.is_null() {
-			let slice = CStr::from_ptr(mem::transmute_copy(&mut &icon_buf)).to_bytes();
+			let slice = CStr::from_ptr(mem::transmute_copy(&icon_buf)).to_bytes();
 			icon = str::from_utf8(slice).unwrap().to_string();
 		}
 
@@ -66,19 +68,27 @@ pub fn get_caption() -> (String, String) {
 }
 
 pub fn set_icon(surface: crate::video::Surface) {
-	unsafe { ll::SDL_WM_SetIcon(surface.raw, ptr::null_mut()); }
+	unsafe {
+		ll::SDL_WM_SetIcon(surface.raw, ptr::null_mut());
+	}
 }
 
 pub fn iconify_window() {
-	unsafe { ll::SDL_WM_IconifyWindow(); }
+	unsafe {
+		ll::SDL_WM_IconifyWindow();
+	}
 }
 
 pub fn toggle_fullscreen(surface: crate::video::Surface) {
-	unsafe { ll::SDL_WM_ToggleFullScreen(surface.raw); }
+	unsafe {
+		ll::SDL_WM_ToggleFullScreen(surface.raw);
+	}
 }
 
 pub fn grab_input(mode: GrabMode) {
-	unsafe { ll::SDL_WM_GrabInput(mode as i32); }
+	unsafe {
+		ll::SDL_WM_GrabInput(mode as i32);
+	}
 }
 
 pub fn toggle_grab_input() {
