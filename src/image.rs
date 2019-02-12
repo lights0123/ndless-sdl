@@ -1,4 +1,4 @@
-use cty::c_int;
+//use cty::c_int;
 use ndless::prelude::*;
 use ndless::rc::Rc;
 
@@ -9,7 +9,7 @@ use crate::video::Surface;
 pub mod ll {
 	#![allow(non_camel_case_types)]
 
-	use cty::{/*c_char, */c_int, c_uint};
+	use cty::{/*c_char, *//*c_int, */c_uint};
 
 	use crate::video::ll::{SDL_RWops, SDL_Surface};
 
@@ -21,7 +21,7 @@ pub mod ll {
 	pub const IMG_INIT_WEBP: IMG_InitFlags = 8;
 
 	extern "C" {
-		pub fn IMG_Init(flags: c_int) -> c_int;
+//		pub fn IMG_Init(flags: c_int) -> c_int;
 		pub fn IMG_Quit();
 //		pub fn IMG_Load(file: *const c_char) -> *mut SDL_Surface;
 		pub fn IMG_LoadGIF_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
@@ -40,7 +40,7 @@ pub enum InitFlag {
 	TIF = ll::IMG_INIT_TIF as isize,
 }
 
-pub fn init(flags: &[InitFlag]) -> Vec<InitFlag> {
+/*pub fn init(flags: &[InitFlag]) -> Vec<InitFlag> {
 	let bitflags = unsafe {
 		ll::IMG_Init(
 			flags
@@ -61,7 +61,7 @@ pub fn init(flags: &[InitFlag]) -> Vec<InitFlag> {
 			}
 		})
 		.collect()
-}
+}*/
 
 /*pub fn load_file(file: impl Into<String>) -> Result<Surface, String> {
 	let cfile = ndless::cstr!(file.into());
