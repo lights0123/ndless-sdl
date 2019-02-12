@@ -36,7 +36,7 @@ pub mod nsdl;
 pub mod video;
 pub mod wm;
 
-pub mod image;
+//pub mod image;
 pub mod sdl;
 pub mod text;
 
