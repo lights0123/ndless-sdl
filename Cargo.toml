@@ -1,6 +1,6 @@
 [package]
 name = "ndless-sdl"
-version = "0.1.2"
+version = "0.1.3"
 authors = [
 	"Brian Anderson <banderson@mozilla.com>",
 	"Kang Seonghoon <public+rust@mearie.org>",

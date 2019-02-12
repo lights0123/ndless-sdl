@@ -9,7 +9,7 @@ use crate::video::Surface;
 pub mod ll {
 	#![allow(non_camel_case_types)]
 
-	use cty::{c_char, c_int, c_uint};
+	use cty::{/*c_char, */c_int, c_uint};
 
 	use crate::video::ll::{SDL_RWops, SDL_Surface};
 
@@ -23,11 +23,11 @@ pub mod ll {
 	extern "C" {
 		pub fn IMG_Init(flags: c_int) -> c_int;
 		pub fn IMG_Quit();
-		pub fn IMG_Load(file: *const c_char) -> *mut SDL_Surface;
+//		pub fn IMG_Load(file: *const c_char) -> *mut SDL_Surface;
 		pub fn IMG_LoadGIF_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
 		pub fn IMG_LoadLBM_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
 		pub fn IMG_LoadPCX_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
-		pub fn IMG_LoadPNM_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
+//		pub fn IMG_LoadPNM_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
 		pub fn IMG_LoadTGA_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
 		pub fn IMG_LoadXCF_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
 	}
@@ -63,7 +63,7 @@ pub fn init(flags: &[InitFlag]) -> Vec<InitFlag> {
 		.collect()
 }
 
-pub fn load_file(file: impl Into<String>) -> Result<Surface, String> {
+/*pub fn load_file(file: impl Into<String>) -> Result<Surface, String> {
 	let cfile = ndless::cstr!(file.into());
 	unsafe {
 		let raw = ll::IMG_Load(cfile.as_ptr());
@@ -74,7 +74,7 @@ pub fn load_file(file: impl Into<String>) -> Result<Surface, String> {
 			Ok(Surface { raw, owned: true })
 		}
 	}
-}
+}*/
 
 macro_rules! load_typed {
 	($name: ident, $function: ident) => {
@@ -102,7 +102,7 @@ macro_rules! load_typed {
 load_typed!(load_mem_gif, IMG_LoadGIF_RW);
 load_typed!(load_mem_lbm, IMG_LoadLBM_RW);
 load_typed!(load_mem_pcx, IMG_LoadPCX_RW);
-load_typed!(load_mem_pnm, IMG_LoadPNM_RW);
+//load_typed!(load_mem_pnm, IMG_LoadPNM_RW);
 load_typed!(load_mem_tga, IMG_LoadTGA_RW);
 load_typed!(load_mem_xcf, IMG_LoadXCF_RW);
 
