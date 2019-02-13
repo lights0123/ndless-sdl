@@ -1,6 +1,6 @@
 [package]
 name = "ndless-sdl"
-version = "0.1.5"
+version = "0.1.6"
 authors = [
 	"Brian Anderson <banderson@mozilla.com>",
 	"Kang Seonghoon <public+rust@mearie.org>",
@@ -20,3 +20,6 @@ cstr_core = { version = "0.1.2", features = ["alloc"] }
 ndless = "0.6.0"
 ndless-freetype = "0.1.1"
 unicode-segmentation = "1.2.1"
+
+[features]
+disable_ctype_ptr = []

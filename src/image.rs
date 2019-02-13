@@ -1,15 +1,18 @@
-//use cty::c_int;
+use cty::c_int;
 use ndless::prelude::*;
-use ndless::rc::Rc;
 
 use crate::get_error;
 use crate::video::ll::SDL_RWFromConstMem;
 use crate::video::Surface;
 
+#[cfg(not(feature = "disable_ctype_ptr"))]
+#[no_mangle]
+pub static __ctype_ptr__: [u8; 128 + 256] = [0; 128 + 256];
+
 pub mod ll {
 	#![allow(non_camel_case_types)]
 
-	use cty::{/*c_char, *//*c_int, */c_uint};
+	use cty::{c_char, c_int, c_uint};
 
 	use crate::video::ll::{SDL_RWops, SDL_Surface};
 
@@ -21,13 +24,13 @@ pub mod ll {
 	pub const IMG_INIT_WEBP: IMG_InitFlags = 8;
 
 	extern "C" {
-//		pub fn IMG_Init(flags: c_int) -> c_int;
+		pub fn IMG_Init(flags: c_int) -> c_int;
 		pub fn IMG_Quit();
-//		pub fn IMG_Load(file: *const c_char) -> *mut SDL_Surface;
+		pub fn IMG_Load(file: *const c_char) -> *mut SDL_Surface;
 		pub fn IMG_LoadGIF_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
 		pub fn IMG_LoadLBM_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
 		pub fn IMG_LoadPCX_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
-//		pub fn IMG_LoadPNM_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
+		pub fn IMG_LoadPNM_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
 		pub fn IMG_LoadTGA_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
 		pub fn IMG_LoadXCF_RW(src: *mut SDL_RWops) -> *mut SDL_Surface;
 	}
@@ -40,7 +43,7 @@ pub enum InitFlag {
 	TIF = ll::IMG_INIT_TIF as isize,
 }
 
-/*pub fn init(flags: &[InitFlag]) -> Vec<InitFlag> {
+pub fn init(flags: &[InitFlag]) -> Vec<InitFlag> {
 	let bitflags = unsafe {
 		ll::IMG_Init(
 			flags
@@ -61,9 +64,9 @@ pub enum InitFlag {
 			}
 		})
 		.collect()
-}*/
+}
 
-/*pub fn load_file(file: impl Into<String>) -> Result<Surface, String> {
+pub fn load_file(file: impl Into<String>) -> Result<Surface, String> {
 	let cfile = ndless::cstr!(file.into());
 	unsafe {
 		let raw = ll::IMG_Load(cfile.as_ptr());
@@ -74,12 +77,11 @@ pub enum InitFlag {
 			Ok(Surface { raw, owned: true })
 		}
 	}
-}*/
+}
 
 macro_rules! load_typed {
 	($name: ident, $function: ident) => {
-		pub fn $name(buffer: impl Into<Rc<Vec<u8>>>) -> Result<Surface, String> {
-			let buffer = buffer.into();
+		pub fn $name(buffer: &[u8]) -> Result<Surface, String> {
 			unsafe {
 				let mem =
 					SDL_RWFromConstMem(buffer.as_ptr() as *const cty::c_void, buffer.len() as i32);
@@ -102,6 +104,7 @@ macro_rules! load_typed {
 load_typed!(load_mem_gif, IMG_LoadGIF_RW);
 load_typed!(load_mem_lbm, IMG_LoadLBM_RW);
 load_typed!(load_mem_pcx, IMG_LoadPCX_RW);
+// PNM disabled for now due to possible link-time errors
 //load_typed!(load_mem_pnm, IMG_LoadPNM_RW);
 load_typed!(load_mem_tga, IMG_LoadTGA_RW);
 load_typed!(load_mem_xcf, IMG_LoadXCF_RW);
