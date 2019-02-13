@@ -5,10 +5,6 @@ use crate::get_error;
 use crate::video::ll::SDL_RWFromConstMem;
 use crate::video::Surface;
 
-#[cfg(not(feature = "disable_ctype_ptr"))]
-#[no_mangle]
-pub static __ctype_ptr__: [u8; 128 + 256] = [0; 128 + 256];
-
 pub mod ll {
 	#![allow(non_camel_case_types)]
 
