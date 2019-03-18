@@ -9,18 +9,19 @@ pub mod freetype {
 	};
 	use crate::video::Color::{RGB, RGBA};
 
-	pub struct Text {
+	#[derive(Debug, PartialEq, Clone)]
+	pub struct Text<'a> {
 		text: String,
 		matrix: ndless_freetype::Matrix,
 		surface: Option<Surface>,
 		up_to_date: bool,
 		height: isize,
-		font: ndless_freetype::Face,
+		font: &'a ndless_freetype::Face,
 		color: Color,
 	}
 
-	impl Text {
-		pub fn new(font: ndless_freetype::Face) -> Self {
+	impl<'a> Text<'a> {
+		pub fn new(font: &'a ndless_freetype::Face) -> Self {
 			Self {
 				text: "".to_string(),
 				matrix: Self::radians_to_matrix(0.),
@@ -39,7 +40,7 @@ pub mod freetype {
 			}
 			self
 		}
-		pub fn font(&mut self, font: ndless_freetype::Face) -> &mut Self {
+		pub fn font(&mut self, font: &'a ndless_freetype::Face) -> &mut Self {
 			if font != self.font {
 				self.font = font;
 				self.up_to_date = false;

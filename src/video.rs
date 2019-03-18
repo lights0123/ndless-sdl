@@ -230,7 +230,7 @@ pub mod ll {
 	}
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Surface {
 	pub raw: *mut ll::SDL_Surface,
 	pub owned: bool,
@@ -343,7 +343,7 @@ fn unwrap_pixel_format(fmt: &PixelFormat) -> ll::SDL_PixelFormat {
 	}
 }
 
-#[derive(PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum Color {
 	RGB(u8, u8, u8),
 	RGBA(u8, u8, u8, u8),
